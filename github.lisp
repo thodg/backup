@@ -6,14 +6,15 @@
 (defvar *repos* nil)
 
 (defun github-backup (user name)
-  (let ((dir (repo::str "~/backup/github.com/" user "/" name "/")))
+  (let ((dir (repo::str "~/backup/github.com/" user "/" name ".git/")))
     (format t "~&~S~%" (pathname dir))
     (if (probe-file (pathname dir))
-        (print (repo::sh "cd " dir " && git fetch"))
+        (print (repo::sh "cd " dir " && git fetch -t"))
         (print (repo::sh "mkdir -p ~/backup/github.com/" user " && "
                          "cd ~/backup/github.com/" user " && "
-                         "git clone git@github.com:" user "/"
-                         name ".git")))))
+                         "git clone --mirror git@github.com:" user "/"
+                         name ".git ")))
+    (force-output)))
 
 (defun backup-all-github-repos (&optional update)
   (when (or update (null *repos*))
